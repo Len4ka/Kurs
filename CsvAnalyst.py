@@ -67,7 +67,22 @@ def meet_name(field):
         if s in str(field): # Есть совпадение
             return True
     # Нет совпадений
-    return False    
+    return False 
+    
+# Подсчет по всем элементам в списке 
+#(Если в этом списке многие элементы содержат имя, то True)    
+def list_meet_name(fields_list):
+    counter_total = 0
+    counter_meet = 0
+    for list_item in fields_list:
+        counter_total += 1
+        if meet_name(list_item):
+            counter_meet += 1
+    # Конец подсчета
+    if counter_meet / counter_total > 0.2:
+        return True
+    # Не набралось нужного количества совпадений
+    return False       
     
 # Обработчик нажатия кнопки
 def process_button():
@@ -76,7 +91,9 @@ def process_button():
     df = pandas_read_csv(file_name)
     lst = get_column(df, 1)
     for item in lst:
-        output_text.insert(tk.END, str(item) + ' ' + str(meet_name(item)) + os.linesep)
+        output_text.insert(tk.END, "В списке предположительно содержится имя." + os.linesep)
+    else:
+        output_text.insert(tk.END, "Предположений для списка не найдено." + os.linesep)
     mb.showinfo(title=None, message="Готово")
 
 # Создание кнопки
