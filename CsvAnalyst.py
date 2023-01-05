@@ -70,7 +70,7 @@ def meet_name(field):
     return False 
     
 # Подсчет по всем элементам в списке 
-#(Если в этом списке многие элементы содержат имя, то True)    
+# (Если в этом списке многие элементы содержат имя, то True)    
 def list_meet_name(fields_list):
     counter_total = 0
     counter_meet = 0
@@ -82,19 +82,25 @@ def list_meet_name(fields_list):
     if counter_meet / counter_total > 0.2:
         return True
     # Не набралось нужного количества совпадений
-    return False       
+    return False  
+    
+# Проход всех столбцов    
+def check_all_columns(df):
+    columns_cnt = df.shape[1]
+    for i in range(columns_cnt): # От 0 до columns_cnt-1
+        lst = get_column(df, i)
+        if list_meet_name(lst):
+            output_text.insert(tk.END, "В столбце " + str(i+1) + " предположительно содержится имя." + os.linesep)
+        else:
+            output_text.insert(tk.END, "Предположений для столбца " + str(i+1) + " не найдено." + os.linesep)          
     
 # Обработчик нажатия кнопки
 def process_button():
     file_name = do_dialog()
     label_01['text'] = file_name
     df = pandas_read_csv(file_name)
-    lst = get_column(df, 1)
-    for item in lst:
-        output_text.insert(tk.END, "В списке предположительно содержится имя." + os.linesep)
-    else:
-        output_text.insert(tk.END, "Предположений для списка не найдено." + os.linesep)
-    mb.showinfo(title=None, message="Готово")
+    check_all_columns(df)
+    mb.showinfo(title=None, message="Готово!")
 
 # Создание кнопки
 button=tk.Button(window, text="Прочитать файл", command=process_button)
