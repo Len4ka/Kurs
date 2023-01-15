@@ -85,6 +85,31 @@ def list_meet_name(fields_list):
     # Не набралось нужного количества совпадений
     return False, ratio  
     
+# Поиск email (Наличие email = True)    
+def meet_email(field):
+    checkfor = ['@']
+    for s in checkfor:
+        if s in str(field): # Есть совпадение
+            return True
+    # Нет совпадений
+    return False 
+    
+# Подсчет по всем элементам в списке 
+# (Если в этом списке многие элементы содержат email, то True)    
+def list_meet_email(fields_list):
+    counter_total = 0
+    counter_meet = 0
+    for list_item in fields_list:
+        counter_total += 1
+        if meet_email(list_item):
+            counter_meet += 1
+    # Конец подсчета
+    ratio = counter_meet / counter_total
+    if ratio > 0.2:
+        return True, ratio
+    # Не набралось нужного количества совпадений
+    return False, ratio    
+    
 # Если в этом поле дата в формате AM/PM, то True    
 def meet_date_am_pm(field):
     checkfor = [' AM', ' PM']
@@ -123,10 +148,17 @@ def check_all_columns(df):
             continue # Все нашли, можно идти к следующему столбцу
             
         # Второй критерий
-        result2 = list_meet_date_am_pm(lst)
+        result2 = list_meet_email(lst)
         if result2[0]:
+            output_text.insert(tk.END, "В столбце " + str(i+1) + " предположительно содержится email." + os.linesep)
+            output_text.insert(tk.END, "Процент совпадений " + "{:.2f}".format(result1[1]*100) + "%." + os.linesep + os.linesep)
+            continue # Все нашли, можно идти к следующему столбцу
+            
+        # Третий критерий
+        result3 = list_meet_date_am_pm(lst)
+        if result3[0]:
             output_text.insert(tk.END, "В столбце " + str(i+1) + " предположительно содержится дата в формате AM/PM." + os.linesep)
-            output_text.insert(tk.END, "Процент совпадений " + "{:.2f}".format(result2[1]*100) + "%." + os.linesep + os.linesep)
+            output_text.insert(tk.END, "Процент совпадений " + "{:.2f}".format(result3[1]*100) + "%." + os.linesep + os.linesep)
             continue # Все нашли, можно идти к следующему столбцу
             
         # Соответствия критериям не найдено
